@@ -11,7 +11,7 @@ export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDate
 
 	arrayOfDays.forEach((week) => {
 		week.forEach((d) => {
-			const currentEvent = eventsStore.find((event) => dayjs(event.date).isSame(dayjs(d.iso), 'date'))
+			const currentDayEvents = eventsStore.filter((event) => dayjs(event.date).isSame(dayjs(d.iso), 'date'))
 			days.push(
 				<div
 					key={d.date}
@@ -27,7 +27,24 @@ export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDate
 					>
 						{d.date}
 					</time>
-					{currentEvent ? <div>{currentEvent.title}</div> : null}
+					<div className="mt-2">
+						{currentDayEvents ? (
+							<div className="space-y-1">
+								{currentDayEvents?.map((event, idx) => (
+									<div
+										key={idx}
+										className="flex cursor-pointer items-center gap-2 rounded-md px-2"
+										style={{
+											backgroundColor: `${event.color}19`,
+										}}
+									>
+										<div className="h-2 w-2 rounded-full" style={{ backgroundColor: event.color }}></div>
+										{event.title}
+									</div>
+								))}
+							</div>
+						) : null}
+					</div>
 				</div>,
 			)
 		})

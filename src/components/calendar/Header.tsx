@@ -14,13 +14,9 @@ export default function Header({ currentMonth, onChangeCurrentMonth }: { current
 	}
 
 	return (
-		<header className="flex items-center justify-between px-4 py-2">
+		<header className="flex items-center justify-between border-b px-4 py-2">
 			<div className="flex">
-				<div className="flex">
-					<img width={40} src="https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_14_2x.png" alt="Logo" />
-					<span>Calender</span>
-				</div>
-				<span className="text-lg font-semibold">{currentMonth.format(dateFormat)}</span>
+				<span className="text-xl font-bold">{currentMonth.format(dateFormat)}</span>
 			</div>
 
 			<div className="flex items-center gap-2">

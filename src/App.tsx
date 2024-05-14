@@ -3,16 +3,15 @@ import dayjs, { Dayjs } from 'dayjs'
 import isTodayPlugin from 'dayjs/plugin/isToday'
 import toObjectPlugin from 'dayjs/plugin/toObject'
 import weekdayPlugin from 'dayjs/plugin/weekday'
+import { produce } from 'immer'
+import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import AddEventModal from './components/calendar/AddEventModal'
 import Header from './components/calendar/Header'
+import Sidebar from './components/calendar/Sidebar'
 import ViewDates from './components/calendar/ViewDates'
 import ViewDays from './components/calendar/ViewDays'
 import { IFormattedDateObj, eventsStoreAtom, getFormattedDateObj, now } from './components/calendar/calender.utils'
-import { Button } from './components/ui/button'
-import { Calendar } from './components/ui/calendar'
-import { useAtom } from 'jotai'
-import { produce } from 'immer'
 
 dayjs.extend(isTodayPlugin)
 dayjs.extend(toObjectPlugin)
@@ -53,38 +52,26 @@ function App() {
 	const [month, setMonth] = useState(currentMonth.toISOString())
 
 	return (
-		<main className="flex h-full flex-col">
-			<Header
+		<main className="flex h-full">
+			<Sidebar
+				onCreateEvent={() => setIsAddEventDialogOpen(true)}
+				month={month}
+				setMonth={setMonth}
 				currentMonth={currentMonth}
-				onChangeCurrentMonth={(day) => {
-					setCurrentMonth(day)
-					setMonth(day.toISOString())
-				}}
+				setCurrentMonth={setCurrentMonth}
 			/>
 
-			<div className="flex flex-1 ">
-				<div>
-					<Button onClick={() => setIsAddEventDialogOpen(true)}>Create Event</Button>
-					<Calendar
-						mode="single"
-						month={dayjs(month).toDate()}
-						onMonthChange={(date) => setMonth(date.toISOString())}
-						selected={currentMonth.toDate()}
-						onSelect={(date) => {
-							setCurrentMonth(dayjs(date))
-						}}
-						className="rounded-md border"
-					/>
-
-					<h3>All Events</h3>
-					{eventsStore?.map((event) => <div key={event.id}>{event.title}</div>)}
-				</div>
-
-				<div className="ring-1 ring-border ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
-					<ViewDays />
-					<div className="flex overflow-auto bg-border text-xs leading-6 text-foreground lg:flex-auto">
-						<ViewDates arrayOfDays={arrayOfDays} />
-					</div>
+			<div className="flex-1 ring-1 ring-border ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
+				<Header
+					currentMonth={currentMonth}
+					onChangeCurrentMonth={(day) => {
+						setCurrentMonth(day)
+						setMonth(day.toISOString())
+					}}
+				/>
+				<ViewDays />
+				<div className="flex overflow-auto bg-border text-xs leading-6 text-foreground lg:flex-auto">
+					<ViewDates arrayOfDays={arrayOfDays} />
 				</div>
 			</div>
 

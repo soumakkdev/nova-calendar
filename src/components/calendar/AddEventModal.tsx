@@ -7,6 +7,7 @@ import { Textarea } from '../ui/textarea'
 import { IEvent } from './calender.utils'
 import dayjs from 'dayjs'
 import { nanoid } from 'nanoid'
+import { CirclePicker } from 'react-color'
 
 export default function AddEventModal({ open, onClose, onConfirm }: { open: boolean; onClose: () => void; onConfirm: (data: IEvent) => void }) {
 	const form = useForm({
@@ -14,6 +15,7 @@ export default function AddEventModal({ open, onClose, onConfirm }: { open: bool
 			title: '',
 			date: new Date().toISOString(),
 			notes: '',
+			color: '',
 		},
 		onSubmit: async ({ value }) => {
 			onConfirm({
@@ -57,6 +59,17 @@ export default function AddEventModal({ open, onClose, onConfirm }: { open: bool
 							name={field.name}
 							onBlur={field.handleBlur}
 							onChange={(date) => field.handleChange(dayjs(date).toISOString())}
+						/>
+					)}
+				</form.Field>
+
+				<form.Field name="color">
+					{(field) => (
+						<CirclePicker
+							value={field.state.value}
+							name={field.name}
+							onBlur={field.handleBlur}
+							onChangeComplete={(color) => field.handleChange(color.hex)}
 						/>
 					)}
 				</form.Field>

@@ -32,6 +32,7 @@ export interface IEvent {
 	title: string
 	date: string
 	note?: string
+	color: string
 }
 
 export const eventsStoreAtom = atomWithStorage<IEvent[]>('eventsStore', [])
