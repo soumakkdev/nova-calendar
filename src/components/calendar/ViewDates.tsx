@@ -1,13 +1,17 @@
 import { cn } from '@/lib/utils'
 import { ReactNode } from 'react'
-import { IFormattedDateObj } from './calender.utils'
+import { IFormattedDateObj, eventsStoreAtom } from './calender.utils'
+import { useAtom } from 'jotai'
+import dayjs from 'dayjs'
 
 export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDateObj[][] }) {
 	const rows: ReactNode[] = []
 	let days: ReactNode[] = []
+	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
 
 	arrayOfDays.forEach((week) => {
 		week.forEach((d) => {
+			const currentEvent = eventsStore.find((event) => dayjs(event.date).isSame(dayjs(d.iso), 'date'))
 			days.push(
 				<div
 					key={d.date}
@@ -23,6 +27,7 @@ export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDate
 					>
 						{d.date}
 					</time>
+					{currentEvent ? <div>{currentEvent.title}</div> : null}
 				</div>,
 			)
 		})

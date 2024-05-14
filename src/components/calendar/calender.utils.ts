@@ -1,4 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs'
+import { atomWithStorage } from 'jotai/utils'
 
 export const getFormattedDateObj = (date: Dayjs, currentMonth: number): IFormattedDateObj => {
 	const clonedObject = { ...date.toObject() }
@@ -8,6 +9,7 @@ export const getFormattedDateObj = (date: Dayjs, currentMonth: number): IFormatt
 		year: clonedObject.years,
 		isCurrentMonth: clonedObject.months === currentMonth,
 		isCurrentDay: date.isToday(),
+		iso: date.toISOString(),
 	}
 	return formatedObject
 }
@@ -22,4 +24,14 @@ export interface IFormattedDateObj {
 	year: number
 	isCurrentDay: boolean
 	isCurrentMonth: boolean
+	iso: string
 }
+
+export interface IEvent {
+	id: string
+	title: string
+	date: string
+	note?: string
+}
+
+export const eventsStoreAtom = atomWithStorage<IEvent[]>('eventsStore', [])

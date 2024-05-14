@@ -4,11 +4,15 @@ import isTodayPlugin from 'dayjs/plugin/isToday'
 import toObjectPlugin from 'dayjs/plugin/toObject'
 import weekdayPlugin from 'dayjs/plugin/weekday'
 import { useEffect, useState } from 'react'
+import AddEventModal from './components/calendar/AddEventModal'
 import Header from './components/calendar/Header'
 import ViewDates from './components/calendar/ViewDates'
 import ViewDays from './components/calendar/ViewDays'
-import { IFormattedDateObj, getFormattedDateObj, now } from './components/calendar/calender.utils'
+import { IFormattedDateObj, eventsStoreAtom, getFormattedDateObj, now } from './components/calendar/calender.utils'
+import { Button } from './components/ui/button'
 import { Calendar } from './components/ui/calendar'
+import { useAtom } from 'jotai'
+import { produce } from 'immer'
 
 dayjs.extend(isTodayPlugin)
 dayjs.extend(toObjectPlugin)
@@ -17,6 +21,8 @@ dayjs.extend(weekdayPlugin)
 function App() {
 	const [currentMonth, setCurrentMonth] = useState<Dayjs>(now)
 	const [arrayOfDays, setArrayOfDays] = useState<IFormattedDateObj[][]>([])
+	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
+	const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false)
 
 	const getAllDays = () => {
 		let currentDate = currentMonth.startOf('month').weekday(0) // 1st sunday in this month
@@ -58,6 +64,7 @@ function App() {
 
 			<div className="flex flex-1 ">
 				<div>
+					<Button onClick={() => setIsAddEventDialogOpen(true)}>Create Event</Button>
 					<Calendar
 						mode="single"
 						month={dayjs(month).toDate()}
@@ -68,6 +75,9 @@ function App() {
 						}}
 						className="rounded-md border"
 					/>
+
+					<h3>All Events</h3>
+					{eventsStore?.map((event) => <div key={event.id}>{event.title}</div>)}
 				</div>
 
 				<div className="ring-1 ring-border ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
@@ -77,6 +87,18 @@ function App() {
 					</div>
 				</div>
 			</div>
+
+			<AddEventModal
+				open={isAddEventDialogOpen}
+				onClose={() => setIsAddEventDialogOpen(false)}
+				onConfirm={(data) => {
+					setEventsStore(
+						produce((draft) => {
+							draft.push(data)
+						}),
+					)
+				}}
+			/>
 		</main>
 	)
 }
