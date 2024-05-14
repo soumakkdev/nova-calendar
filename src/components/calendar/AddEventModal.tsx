@@ -56,7 +56,6 @@ export default function AddEventModal({ open, onClose, onConfirm }: { open: bool
 						<DatePicker
 							id={field.name}
 							value={dayjs(field.state.value).toDate()}
-							name={field.name}
 							onBlur={field.handleBlur}
 							onChange={(date) => field.handleChange(dayjs(date).toISOString())}
 						/>
@@ -64,14 +63,7 @@ export default function AddEventModal({ open, onClose, onConfirm }: { open: bool
 				</form.Field>
 
 				<form.Field name="color">
-					{(field) => (
-						<CirclePicker
-							value={field.state.value}
-							name={field.name}
-							onBlur={field.handleBlur}
-							onChangeComplete={(color) => field.handleChange(color.hex)}
-						/>
-					)}
+					{(field) => <CirclePicker color={field.state.value} onChangeComplete={(color) => field.handleChange(color.hex)} />}
 				</form.Field>
 
 				<form.Field name="notes">

@@ -1,11 +1,23 @@
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { useAtom } from 'jotai'
 import { Button } from '../ui/button'
 import { Calendar } from '../ui/calendar'
 import { eventsStoreAtom } from './calender.utils'
 import { Plus } from 'lucide-react'
 
-export default function Sidebar({ month, setMonth, currentMonth, setCurrentMonth, onCreateEvent }) {
+export default function Sidebar({
+	month,
+	setMonth,
+	currentMonth,
+	setCurrentMonth,
+	onCreateEvent,
+}: {
+	month: string
+	setMonth: (value: string) => void
+	currentMonth: Dayjs
+	setCurrentMonth: (value: Dayjs) => void
+	onCreateEvent: () => void
+}) {
 	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
 
 	return (

@@ -3,11 +3,18 @@ import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-export function DatePicker({ value, onChange, ...rest }: { value: Date; onChange: (date?: Date) => void }) {
+interface IDatePicker {
+	id: string
+	value: Date
+	onChange: (date?: Date) => void
+	onBlur?: () => void
+}
+
+export function DatePicker({ value, onChange, ...rest }: IDatePicker) {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
