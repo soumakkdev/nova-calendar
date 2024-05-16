@@ -12,16 +12,14 @@ export default function Sidebar({
 	setMonth,
 	currentMonth,
 	setCurrentMonth,
-	onCreateEvent,
 }: {
 	month: string
 	setMonth: (value: string) => void
 	currentMonth: Dayjs
 	setCurrentMonth: (value: Dayjs) => void
-	onCreateEvent: () => void
 }) {
 	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
-	const [selectedEventForEdit, setSelectedEventForEdit] = useState<IEvent | null>(null)
+	const [eventDialogInfo, setEventDialogInfo] = useState<{ event: IEvent | null; isEdit: boolean } | null>(null)
 
 	return (
 		<div className="space-y-5 p-4">
@@ -30,7 +28,17 @@ export default function Sidebar({
 				<p className="mb-1 text-xl font-bold">Calender</p>
 			</div>
 
-			<Button onClick={onCreateEvent}>
+			<Button
+				onClick={() =>
+					setEventDialogInfo({
+						event: {
+							date: currentMonth.toISOString(),
+							color: '#607d8b',
+						},
+						isEdit: false,
+					})
+				}
+			>
 				<Plus className="mr-1 h-5 w-5" />
 				Create Event
 			</Button>
@@ -53,7 +61,7 @@ export default function Sidebar({
 						<div
 							key={event.id}
 							className="flex cursor-pointer items-center gap-2 rounded-md p-1 px-3 text-sm font-medium"
-							onClick={() => setSelectedEventForEdit(event)}
+							onClick={() => setEventDialogInfo({ event, isEdit: true })}
 						>
 							<div className="h-2 w-2 rounded-full" style={{ backgroundColor: event.color }}></div>
 							{event.title}
@@ -62,8 +70,8 @@ export default function Sidebar({
 				</div>
 			</div>
 
-			{selectedEventForEdit !== null ? (
-				<SaveEventModal open={selectedEventForEdit !== null} onClose={() => setSelectedEventForEdit(null)} initialData={selectedEventForEdit} />
+			{eventDialogInfo !== null ? (
+				<SaveEventModal open={eventDialogInfo !== null} onClose={() => setEventDialogInfo(null)} initialData={eventDialogInfo?.event} />
 			) : null}
 		</div>
 	)

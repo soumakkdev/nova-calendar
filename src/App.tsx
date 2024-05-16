@@ -3,15 +3,12 @@ import dayjs, { Dayjs } from 'dayjs'
 import isTodayPlugin from 'dayjs/plugin/isToday'
 import toObjectPlugin from 'dayjs/plugin/toObject'
 import weekdayPlugin from 'dayjs/plugin/weekday'
-import { produce } from 'immer'
-import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
-import SaveEventModal from './components/calendar/SaveEventModal'
 import Header from './components/calendar/Header'
 import Sidebar from './components/calendar/Sidebar'
 import ViewDates from './components/calendar/ViewDates'
 import ViewDays from './components/calendar/ViewDays'
-import { IFormattedDateObj, eventsStoreAtom, getFormattedDateObj, now } from './components/calendar/calender.utils'
+import { IFormattedDateObj, getFormattedDateObj, now } from './components/calendar/calender.utils'
 
 dayjs.extend(isTodayPlugin)
 dayjs.extend(toObjectPlugin)
@@ -20,8 +17,6 @@ dayjs.extend(weekdayPlugin)
 function App() {
 	const [currentMonth, setCurrentMonth] = useState<Dayjs>(now)
 	const [arrayOfDays, setArrayOfDays] = useState<IFormattedDateObj[][]>([])
-	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
-	const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false)
 
 	const getAllDays = () => {
 		let currentDate = currentMonth.startOf('month').weekday(0) // 1st sunday in this month
@@ -53,13 +48,7 @@ function App() {
 
 	return (
 		<main className="flex h-full">
-			<Sidebar
-				onCreateEvent={() => setIsAddEventDialogOpen(true)}
-				month={month}
-				setMonth={setMonth}
-				currentMonth={currentMonth}
-				setCurrentMonth={setCurrentMonth}
-			/>
+			<Sidebar month={month} setMonth={setMonth} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} />
 
 			<div className="flex-1 ring-1 ring-border ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
 				<Header
@@ -74,8 +63,6 @@ function App() {
 					<ViewDates arrayOfDays={arrayOfDays} />
 				</div>
 			</div>
-
-			<SaveEventModal open={isAddEventDialogOpen} onClose={() => setIsAddEventDialogOpen(false)} />
 		</main>
 	)
 }
