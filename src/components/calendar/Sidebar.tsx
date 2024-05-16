@@ -2,8 +2,10 @@ import dayjs, { Dayjs } from 'dayjs'
 import { useAtom } from 'jotai'
 import { Button } from '../ui/button'
 import { Calendar } from '../ui/calendar'
-import { eventsStoreAtom } from './calender.utils'
+import { IEvent, eventsStoreAtom } from './calender.utils'
 import { Plus } from 'lucide-react'
+import SaveEventModal from './SaveEventModal'
+import { useState } from 'react'
 
 export default function Sidebar({
 	month,
@@ -19,6 +21,7 @@ export default function Sidebar({
 	onCreateEvent: () => void
 }) {
 	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
+	const [selectedEventForEdit, setSelectedEventForEdit] = useState<IEvent | null>(null)
 
 	return (
 		<div className="space-y-5 p-4">
@@ -47,13 +50,21 @@ export default function Sidebar({
 				<h3 className="mb-2 text-lg font-bold">All Events</h3>
 				<div className="space-y-2">
 					{eventsStore?.map((event) => (
-						<div key={event.id} className="flex items-center gap-2 rounded-md p-1 px-3 text-sm font-medium">
+						<div
+							key={event.id}
+							className="flex cursor-pointer items-center gap-2 rounded-md p-1 px-3 text-sm font-medium"
+							onClick={() => setSelectedEventForEdit(event)}
+						>
 							<div className="h-2 w-2 rounded-full" style={{ backgroundColor: event.color }}></div>
 							{event.title}
 						</div>
 					))}
 				</div>
 			</div>
+
+			{selectedEventForEdit !== null ? (
+				<SaveEventModal open={selectedEventForEdit !== null} onClose={() => setSelectedEventForEdit(null)} initialData={selectedEventForEdit} />
+			) : null}
 		</div>
 	)
 }

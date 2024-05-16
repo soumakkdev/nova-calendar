@@ -4,27 +4,69 @@ import Modal from '../ui/Modal'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
-import { IEvent } from './calender.utils'
+import { IEvent, eventsStoreAtom } from './calender.utils'
 import dayjs from 'dayjs'
 import { nanoid } from 'nanoid'
 import { CirclePicker } from 'react-color'
+import { useAtom } from 'jotai'
+import { produce } from 'immer'
 
-export default function AddEventModal({ open, onClose, onConfirm }: { open: boolean; onClose: () => void; onConfirm: (data: IEvent) => void }) {
+export default function SaveEventModal({
+	isEdit,
+	initialData,
+	open,
+	onClose,
+}: {
+	isEdit?: boolean
+	initialData?: IEvent | null
+	open: boolean
+	onClose: () => void
+}) {
+	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
+
 	const form = useForm({
 		defaultValues: {
-			title: '',
-			date: new Date().toISOString(),
-			notes: '',
-			color: '',
+			title: initialData?.title ?? '',
+			date: initialData?.date ?? new Date().toISOString(),
+			notes: initialData?.notes ?? '',
+			color: initialData?.color ?? '',
 		},
 		onSubmit: async ({ value }) => {
-			onConfirm({
-				...value,
-				id: nanoid(10),
-			})
+			if (isEdit && initialData) {
+				setEventsStore(
+					produce((draft: IEvent[]) => {
+						const idx = draft?.findIndex((e) => e.id === initialData.id)
+						draft.splice(idx, 1, {
+							...initialData,
+							...value,
+						})
+					}),
+				)
+			} else {
+				setEventsStore(
+					produce((draft) => {
+						draft.push({
+							...value,
+							id: nanoid(10),
+						})
+					}),
+				)
+			}
 			onClose()
 		},
 	})
+
+	function handleDelete() {
+		if (initialData) {
+			setEventsStore(
+				produce((draft: IEvent[]) => {
+					const idx = draft?.findIndex((e) => e.id === initialData.id)
+					draft.splice(idx, 1)
+				}),
+			)
+			onClose()
+		}
+	}
 
 	return (
 		<Modal open={open} onClose={onClose}>
@@ -79,7 +121,14 @@ export default function AddEventModal({ open, onClose, onConfirm }: { open: bool
 					)}
 				</form.Field>
 
-				<Modal.Footer>
+				<Modal.Footer className="sm:justify-between">
+					{isEdit ? (
+						<Button variant="ghost" onClick={handleDelete}>
+							Delete
+						</Button>
+					) : (
+						<div></div>
+					)}
 					<Button>Save</Button>
 				</Modal.Footer>
 			</form>

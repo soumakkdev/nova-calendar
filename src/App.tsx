@@ -6,7 +6,7 @@ import weekdayPlugin from 'dayjs/plugin/weekday'
 import { produce } from 'immer'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
-import AddEventModal from './components/calendar/AddEventModal'
+import SaveEventModal from './components/calendar/SaveEventModal'
 import Header from './components/calendar/Header'
 import Sidebar from './components/calendar/Sidebar'
 import ViewDates from './components/calendar/ViewDates'
@@ -75,17 +75,7 @@ function App() {
 				</div>
 			</div>
 
-			<AddEventModal
-				open={isAddEventDialogOpen}
-				onClose={() => setIsAddEventDialogOpen(false)}
-				onConfirm={(data) => {
-					setEventsStore(
-						produce((draft) => {
-							draft.push(data)
-						}),
-					)
-				}}
-			/>
+			<SaveEventModal open={isAddEventDialogOpen} onClose={() => setIsAddEventDialogOpen(false)} />
 		</main>
 	)
 }

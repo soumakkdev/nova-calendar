@@ -28,10 +28,10 @@ export interface IFormattedDateObj {
 }
 
 export interface IEvent {
-	id: string
-	title: string
+	id?: string
+	title?: string
 	date: string
-	note?: string
+	notes?: string
 	color: string
 }
 
