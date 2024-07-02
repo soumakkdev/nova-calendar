@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { useAtom } from 'jotai'
 import { Plus } from 'lucide-react'
 import { ReactNode, useState } from 'react'
-import SaveEventModal from './SaveEventModal'
+import AddEventPopover from './AddEventPopover'
 import { IEvent, IFormattedDateObj, eventsStoreAtom } from './calender.utils'
 
 export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDateObj[][] }) {
@@ -32,34 +32,50 @@ export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDate
 							{d.date}
 						</time>
 
-						<Plus
-							onClick={() =>
-								setEventDialogInfo({
-									event: {
-										date: d.iso,
-										color: '#607d8b',
-									},
-									isEdit: false,
-								})
+						<AddEventPopover
+							open={eventDialogInfo !== null}
+							onClose={() => setEventDialogInfo(null)}
+							isEdit={eventDialogInfo?.isEdit}
+							initialData={eventDialogInfo?.event}
+							children={
+								<Plus
+									onClick={() =>
+										setEventDialogInfo({
+											event: {
+												date: d.iso,
+												color: '#607d8b',
+											},
+											isEdit: false,
+										})
+									}
+									className="h-4 w-4 cursor-pointer text-muted-foreground opacity-0 group-hover:opacity-100"
+								/>
 							}
-							className="h-4 w-4 cursor-pointer text-muted-foreground opacity-0 group-hover:opacity-100"
 						/>
 					</div>
 					<div className="mt-2">
 						{currentDayEvents ? (
 							<div className="space-y-1">
 								{currentDayEvents?.map((event, idx) => (
-									<div
+									<AddEventPopover
 										key={idx}
-										className="flex cursor-pointer items-center gap-2 rounded-md px-2"
-										style={{
-											backgroundColor: `${event.color}19`,
-										}}
-										onClick={() => setEventDialogInfo({ event, isEdit: true })}
+										open={eventDialogInfo !== null}
+										onClose={() => setEventDialogInfo(null)}
+										isEdit={eventDialogInfo?.isEdit}
+										initialData={eventDialogInfo?.event}
 									>
-										<div className="h-2 w-2 rounded-full" style={{ backgroundColor: event.color }}></div>
-										{event.title}
-									</div>
+										<div
+											className="flex cursor-pointer items-center gap-2 rounded-md px-2"
+											style={{
+												backgroundColor: `${event.color}19`,
+											}}
+											title={event.title}
+											onClick={() => setEventDialogInfo({ event, isEdit: true })}
+										>
+											<div className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: event.color }}></div>
+											<span className="overflow-hidden text-ellipsis whitespace-nowrap">{event.title}</span>
+										</div>
+									</AddEventPopover>
 								))}
 							</div>
 						) : null}
@@ -74,14 +90,6 @@ export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDate
 	return (
 		<>
 			<div className="grid w-full grid-cols-7 grid-rows-6 gap-px">{rows}</div>
-			{eventDialogInfo !== null ? (
-				<SaveEventModal
-					open={eventDialogInfo !== null}
-					onClose={() => setEventDialogInfo(null)}
-					isEdit={eventDialogInfo.isEdit}
-					initialData={eventDialogInfo.event}
-				/>
-			) : null}
 		</>
 	)
 }

@@ -4,7 +4,7 @@ import { Button } from '../ui/button'
 import { Calendar } from '../ui/calendar'
 import { IEvent, eventsStoreAtom } from './calender.utils'
 import { Plus } from 'lucide-react'
-import SaveEventModal from './SaveEventModal'
+import AddEventPopover from './AddEventPopover'
 import { useState } from 'react'
 
 export default function Sidebar({
@@ -71,7 +71,7 @@ export default function Sidebar({
 			</div>
 
 			{eventDialogInfo !== null ? (
-				<SaveEventModal open={eventDialogInfo !== null} onClose={() => setEventDialogInfo(null)} initialData={eventDialogInfo?.event} />
+				<AddEventPopover open={eventDialogInfo !== null} onClose={() => setEventDialogInfo(null)} initialData={eventDialogInfo?.event} />
 			) : null}
 		</div>
 	)
