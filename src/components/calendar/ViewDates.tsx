@@ -2,15 +2,15 @@ import { cn } from '@/lib/utils'
 import dayjs from 'dayjs'
 import { useAtom } from 'jotai'
 import { Plus } from 'lucide-react'
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import AddEventPopover from './AddEventPopover'
-import { IEvent, IFormattedDateObj, eventsStoreAtom } from './calender.utils'
+import ViewEventPopover from './ViewEventPopover'
+import { IFormattedDateObj, eventsStoreAtom } from './calender.utils'
 
 export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDateObj[][] }) {
 	const rows: ReactNode[] = []
 	let days: ReactNode[] = []
 	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
-	const [eventDialogInfo, setEventDialogInfo] = useState<{ event: IEvent | null; isEdit: boolean } | null>(null)
 
 	arrayOfDays.forEach((week) => {
 		week.forEach((d) => {
@@ -33,49 +33,30 @@ export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDate
 						</time>
 
 						<AddEventPopover
-							open={eventDialogInfo !== null}
-							onClose={() => setEventDialogInfo(null)}
-							isEdit={eventDialogInfo?.isEdit}
-							initialData={eventDialogInfo?.event}
-							children={
-								<Plus
-									onClick={() =>
-										setEventDialogInfo({
-											event: {
-												date: d.iso,
-												color: '#607d8b',
-											},
-											isEdit: false,
-										})
-									}
-									className="h-4 w-4 cursor-pointer text-muted-foreground opacity-0 group-hover:opacity-100"
-								/>
-							}
+							isEdit={false}
+							initialData={{
+								date: d.iso,
+								color: '#607d8b',
+							}}
+							children={<Plus className="h-4 w-4 cursor-pointer text-muted-foreground opacity-0 group-hover:opacity-100" />}
 						/>
 					</div>
 					<div className="mt-2">
 						{currentDayEvents ? (
 							<div className="space-y-1">
 								{currentDayEvents?.map((event, idx) => (
-									<AddEventPopover
-										key={idx}
-										open={eventDialogInfo !== null}
-										onClose={() => setEventDialogInfo(null)}
-										isEdit={eventDialogInfo?.isEdit}
-										initialData={eventDialogInfo?.event}
-									>
+									<ViewEventPopover key={idx} event={event}>
 										<div
 											className="flex cursor-pointer items-center gap-2 rounded-md px-2"
 											style={{
 												backgroundColor: `${event.color}19`,
 											}}
 											title={event.title}
-											onClick={() => setEventDialogInfo({ event, isEdit: true })}
 										>
 											<div className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: event.color }}></div>
 											<span className="overflow-hidden text-ellipsis whitespace-nowrap">{event.title}</span>
 										</div>
-									</AddEventPopover>
+									</ViewEventPopover>
 								))}
 							</div>
 						) : null}

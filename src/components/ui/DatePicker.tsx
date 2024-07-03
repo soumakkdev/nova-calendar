@@ -17,7 +17,11 @@ export function DatePicker({ value, onChange, ...rest }: IDatePicker) {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<Button {...rest} variant={'outline'} className={cn('w-full justify-start text-left font-normal', !value && 'text-muted-foreground')}>
+				<Button
+					{...rest}
+					variant={'outline'}
+					className={cn('w-full justify-start rounded-lg text-left text-sm font-normal', !value && 'text-muted-foreground')}
+				>
 					<CalendarIcon className="mr-2 h-4 w-4" />
 					{value ? format(value, 'PPP') : <span>Pick a date</span>}
 				</Button>

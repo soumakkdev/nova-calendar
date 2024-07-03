@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { produce } from 'immer'
 import { useAtom } from 'jotai'
 import { nanoid } from 'nanoid'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { CirclePicker } from 'react-color'
 import { DatePicker } from '../ui/DatePicker'
 import { Button } from '../ui/button'
@@ -12,20 +12,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Textarea } from '../ui/textarea'
 import { IEvent, eventsStoreAtom } from './calender.utils'
 
-export default function AddEventPopover({
-	isEdit,
-	initialData,
-	open,
-	onClose,
-	children,
-}: {
-	isEdit?: boolean
-	initialData?: IEvent | null
-	open: boolean
-	onClose: () => void
-	children: ReactNode
-}) {
+export default function AddEventPopover({ isEdit, initialData, children }: { isEdit?: boolean; initialData?: IEvent | null; children: ReactNode }) {
 	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
+	const [open, setOpen] = useState(false)
 
 	const form = useForm({
 		defaultValues: {
@@ -55,28 +44,16 @@ export default function AddEventPopover({
 					}),
 				)
 			}
-			onClose()
+			setOpen(false)
 		},
 	})
 
-	function handleDelete() {
-		if (initialData) {
-			setEventsStore(
-				produce((draft: IEvent[]) => {
-					const idx = draft?.findIndex((e) => e.id === initialData.id)
-					draft.splice(idx, 1)
-				}),
-			)
-			onClose()
-		}
-	}
-
 	return (
-		<Popover>
+		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>{children}</PopoverTrigger>
-			<PopoverContent>
+			<PopoverContent align="start" side="right">
 				<form
-					className="space-y-5"
+					className="space-y-3"
 					onSubmit={(e) => {
 						e.preventDefault()
 						e.stopPropagation()
@@ -126,15 +103,8 @@ export default function AddEventPopover({
 						)}
 					</form.Field>
 
-					<div className="flex justify-between">
-						{isEdit ? (
-							<Button variant="ghost" onClick={handleDelete}>
-								Delete
-							</Button>
-						) : (
-							<div></div>
-						)}
-						<Button>Save</Button>
+					<div className="flex justify-end">
+						<Button size="sm">Save</Button>
 					</div>
 				</form>
 			</PopoverContent>
