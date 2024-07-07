@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { useAtom } from 'jotai'
 import { Plus } from 'lucide-react'
 import { ReactNode } from 'react'
+import { IconButton } from '../ui/iconbutton'
 import AddEventPopover from './AddEventPopover'
 import ViewEventPopover from './ViewEventPopover'
 import { IFormattedDateObj, eventsStoreAtom } from './calender.utils'
@@ -36,9 +37,12 @@ export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDate
 							isEdit={false}
 							initialData={{
 								date: d.iso,
-								color: '#607d8b',
 							}}
-							children={<Plus className="h-4 w-4 cursor-pointer text-muted-foreground opacity-0 group-hover:opacity-100" />}
+							children={
+								<IconButton className="h-6 w-6">
+									<Plus className="h-4 w-4 cursor-pointer text-muted-foreground opacity-0 group-hover:opacity-100" />
+								</IconButton>
+							}
 						/>
 					</div>
 					<div className="mt-2">
@@ -49,7 +53,7 @@ export default function ViewDates({ arrayOfDays }: { arrayOfDays: IFormattedDate
 										<div
 											className="flex cursor-pointer items-center gap-2 rounded-md px-2"
 											style={{
-												backgroundColor: `${event.color}19`,
+												backgroundColor: `${event.color}33`,
 											}}
 											title={event.title}
 										>

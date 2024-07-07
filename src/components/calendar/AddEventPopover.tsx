@@ -10,9 +10,19 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Textarea } from '../ui/textarea'
-import { IEvent, eventsStoreAtom } from './calender.utils'
+import { EventsColors, IEvent, eventsStoreAtom, pickRandom } from './calender.utils'
 
-export default function AddEventPopover({ isEdit, initialData, children }: { isEdit?: boolean; initialData?: IEvent | null; children: ReactNode }) {
+export default function AddEventPopover({
+	isEdit,
+	initialData,
+	children,
+	enableDelete,
+}: {
+	isEdit?: boolean
+	initialData?: IEvent | null
+	children: ReactNode
+	enableDelete?: boolean
+}) {
 	const [eventsStore, setEventsStore] = useAtom(eventsStoreAtom)
 	const [open, setOpen] = useState(false)
 
@@ -21,7 +31,7 @@ export default function AddEventPopover({ isEdit, initialData, children }: { isE
 			title: initialData?.title ?? '',
 			date: initialData?.date ?? new Date().toISOString(),
 			notes: initialData?.notes ?? '',
-			color: initialData?.color ?? '',
+			color: initialData?.color ?? pickRandom(EventsColors),
 		},
 		onSubmit: async ({ value }) => {
 			if (isEdit && initialData) {
@@ -48,6 +58,18 @@ export default function AddEventPopover({ isEdit, initialData, children }: { isE
 		},
 	})
 
+	function handleDelete(eventId?: string) {
+		if (eventId) {
+			setEventsStore(
+				produce((draft: IEvent[]) => {
+					const idx = draft?.findIndex((e) => e.id === eventId)
+					draft.splice(idx, 1)
+				}),
+			)
+			setOpen(false)
+		}
+	}
+
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -60,18 +82,30 @@ export default function AddEventPopover({ isEdit, initialData, children }: { isE
 						form.handleSubmit()
 					}}
 				>
-					<p className="font-semibold">Create Event</p>
+					{/* <p className="font-semibold">Create Event</p> */}
 
-					<form.Field name="title">
+					<form.Field
+						name="title"
+						validators={{
+							onSubmit: ({ value }) => (!value ? "Title can't be empty" : undefined),
+						}}
+					>
 						{(field) => (
-							<Input
-								id={field.name}
-								value={field.state.value}
-								name={field.name}
-								onBlur={field.handleBlur}
-								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder="Event name"
-							/>
+							<>
+								<Input
+									id={field.name}
+									value={field.state.value}
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="Event name"
+								/>
+								{field.state.meta.errors ? (
+									<em role="alert" className="text-xs text-red-600">
+										{field.state.meta.errors.join(', ')}
+									</em>
+								) : null}{' '}
+							</>
 						)}
 					</form.Field>
 
@@ -87,7 +121,9 @@ export default function AddEventPopover({ isEdit, initialData, children }: { isE
 					</form.Field>
 
 					<form.Field name="color">
-						{(field) => <CirclePicker color={field.state.value} onChangeComplete={(color) => field.handleChange(color.hex)} />}
+						{(field) => (
+							<CirclePicker colors={EventsColors} color={field.state.value} onChangeComplete={(color) => field.handleChange(color.hex)} />
+						)}
 					</form.Field>
 
 					<form.Field name="notes">
@@ -103,8 +139,13 @@ export default function AddEventPopover({ isEdit, initialData, children }: { isE
 						)}
 					</form.Field>
 
-					<div className="flex justify-end">
+					<div className="flex flex-row-reverse justify-between">
 						<Button size="sm">Save</Button>
+						{enableDelete && initialData?.id ? (
+							<Button variant="ghost" size="sm" onClick={() => handleDelete(initialData?.id)}>
+								Delete
+							</Button>
+						) : null}
 					</div>
 				</form>
 			</PopoverContent>

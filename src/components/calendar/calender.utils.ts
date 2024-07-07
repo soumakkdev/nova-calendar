@@ -16,7 +16,7 @@ export const getFormattedDateObj = (date: Dayjs, currentMonth: number): IFormatt
 
 export const now = dayjs()
 export const dayFormat = 'ddd'
-export const dateFormat = 'MMM YYYY'
+export const dateFormat = 'MMMM YYYY'
 
 export interface IFormattedDateObj {
 	date: number
@@ -32,7 +32,33 @@ export interface IEvent {
 	title?: string
 	date: string
 	notes?: string
-	color: string
+	color?: string
 }
 
 export const eventsStoreAtom = atomWithStorage<IEvent[]>('eventsStore', [])
+
+export const EventsColors = [
+	'#f44336',
+	'#e91e63',
+	'#9c27b0',
+	'#673ab7',
+	'#3f51b5',
+	'#2196f3',
+	'#03a9f4',
+	'#00bcd4',
+	'#009688',
+	'#4caf50',
+	'#8bc34a',
+	'#cddc39',
+	'#ffeb3b',
+	'#ffc107',
+	'#ff9800',
+	'#ff5722',
+	'#795548',
+	'#607d8b',
+]
+
+export function pickRandom(array: any[]) {
+	const r = Math.floor(Math.random() * array.length)
+	return array[r]
+}

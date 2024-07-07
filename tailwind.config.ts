@@ -12,6 +12,9 @@ export default {
 				'2xl': '1400px',
 			},
 		},
+		fontFamily: {
+			body: '"Work Sans", sans-serif',
+		},
 		extend: {
 			colors: {
 				border: 'var(--border)',
