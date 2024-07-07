@@ -15,8 +15,9 @@ export default function Header({ currentMonth, onChangeCurrentMonth }: { current
 
 	return (
 		<header className="flex items-center justify-between border-b px-4 py-2">
-			<div className="flex">
-				<span className="text-xl font-bold">{currentMonth.format(dateFormat)}</span>
+			<div className="flex gap-1">
+				<span className="text-xl font-bold">{currentMonth.format('MMMM')}</span>
+				<span className="text-xl font-medium">{currentMonth.format('YYYY')}</span>
 			</div>
 
 			<div className="flex items-center gap-2">

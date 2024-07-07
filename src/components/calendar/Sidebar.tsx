@@ -29,7 +29,6 @@ export default function Sidebar({
 			<AddEventPopover
 				initialData={{
 					date: currentMonth.toISOString(),
-					color: '#607d8b',
 				}}
 			>
 				<Button>
@@ -50,18 +49,18 @@ export default function Sidebar({
 			/>
 
 			<div>
-				<h3 className="mb-2 text-lg font-bold">All Events</h3>
+				<h3 className="mb-2 text-sm font-semibold uppercase text-muted-foreground">All Events</h3>
 				<div className="space-y-2">
-					{eventsStore?.map((event) => (
-						<div
-							key={event.id}
-							className="flex cursor-pointer items-center gap-2 rounded-md p-1 px-3 text-sm font-medium"
-							// onClick={() => setEventDialogInfo({ event, isEdit: true })}
-						>
-							<div className="h-2 w-2 rounded-full" style={{ backgroundColor: event.color }}></div>
-							{event.title}
-						</div>
-					))}
+					{eventsStore
+						?.filter((event) => dayjs(event.date).isSame(dayjs(month), 'month'))
+						?.map((event) => (
+							<AddEventPopover initialData={event} isEdit enableDelete>
+								<div key={event.id} className="flex cursor-pointer items-center gap-2 rounded-md p-1 px-3 text-sm font-medium hover:bg-muted">
+									<div className="h-2 w-2 rounded-full" style={{ backgroundColor: event.color }}></div>
+									{event.title}
+								</div>
+							</AddEventPopover>
+						))}
 				</div>
 			</div>
 		</div>
